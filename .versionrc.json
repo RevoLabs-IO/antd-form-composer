@@ -1,0 +1,63 @@
+{
+  "types": [
+    {
+      "type": "feat",
+      "section": "Features",
+      "hidden": false
+    },
+    {
+      "type": "fix",
+      "section": "Bug Fixes",
+      "hidden": false
+    },
+    {
+      "type": "docs",
+      "section": "Documentation",
+      "hidden": false
+    },
+    {
+      "type": "perf",
+      "section": "Performance Updates",
+      "hidden": false
+    },
+    {
+      "type": "chore",
+      "section": "Internals",
+      "hidden": false
+    },
+    {
+      "type": "test",
+      "section": "Internals",
+      "hidden": false
+    },
+    {
+      "type": "build",
+      "section": "Internals",
+      "hidden": false
+    },
+    {
+      "type": "ci",
+      "section": "Internals",
+      "hidden": false
+    },
+    {
+      "type": "refactor",
+      "section": "Internals",
+      "hidden": false
+    },
+    {
+      "type": "style",
+      "section": "Internals",
+      "hidden": false
+    },
+    {
+      "type": "revert",
+      "section": "Internals",
+      "hidden": false
+    }
+  ],
+  "skip": {
+    "changelog": true
+  },
+  "commitAll": true
+}
