@@ -10,6 +10,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
+    "ci": "pnpm run lint && yarn type-check",
     "lint": "ESLINT_USE_FLAT_CONFIG=false eslint . --ext .ts,.tsx",
     "lint:fix": "ESLINT_USE_FLAT_CONFIG=false eslint . --ext .ts,.tsx --fix",
     "preview": "vite preview",
@@ -35,7 +36,8 @@
   },
   "homepage": "https://github.com/revolabs-io/antd-form-composer#readme",
   "peerDependencies": {
-    "react": ">=17.x"
+    "antd": ">=4",
+    "react": ">=16"
   },
   "lint-staged": {
     "*.{ts,tsx}": [
@@ -63,6 +65,7 @@
     "eslint-plugin-react-refresh": "0.4.16",
     "eslint-plugin-simple-import-sort": "12.1.1",
     "husky": "9.1.7",
+    "antd": "4.24.16",
     "lint-staged": "15.2.10",
     "react": "18.3.1",
     "react-dom": "18.3.1",

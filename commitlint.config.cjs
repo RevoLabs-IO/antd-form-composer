@@ -1,4 +1,5 @@
 const standardVersionTypes = require('./.versionrc.json').types;
+
 const typeEnums = standardVersionTypes.map((t) => t.type);
 
 module.exports = {

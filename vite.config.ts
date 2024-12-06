@@ -23,7 +23,7 @@ export default defineConfig(() => {
       // Generate TypeScript declaration files
       dts({
         // Only include main entry file
-        include: ['lib/index.ts'],
+        include: ['lib/*.ts'],
         // Adjust output path for declaration files
         beforeWriteFile: (filePath, content) => ({
           filePath: filePath.replace('/lib', ''),
