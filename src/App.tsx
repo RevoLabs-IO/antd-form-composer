@@ -1,15 +1,15 @@
 import {
-  AnyObject,
   FormComposer,
   FormComposerItemType,
   registerInputComponents,
 } from '@lib';
 import {
   AutoComplete,
+  Button,
+  Card,
   Cascader,
   Checkbox,
   DatePicker,
-  FormInstance,
   InputNumber,
   Mentions,
   Rate,
@@ -44,15 +44,11 @@ type FormValues = {
 };
 
 function App() {
-  const renderInputProps = useCallback(
-    (form: FormInstance, values: AnyObject) => {
-      console.log(form, values);
-      return {
-        placeholder: '',
-      };
-    },
-    [],
-  );
+  const renderInputProps = useCallback(() => {
+    return {
+      placeholder: '',
+    };
+  }, []);
 
   const items = useMemo(() => {
     return [
@@ -101,7 +97,6 @@ function App() {
                   { required: true, message: 'Vui lòng nhập tên thiết bị ' },
                 ],
               },
-              inputProps: renderInputProps,
             },
             {
               col: {
@@ -139,9 +134,40 @@ function App() {
         type: 'list',
         col: 24,
         itemProps: {
+          label: 'Complex dynamic',
           name: 'complex-dynamic',
         },
         inputProps: {
+          listRender: (content, _fields, operation) => {
+            return (
+              <>
+                {content}
+                <Button type="dashed" onClick={() => operation.add()} block>
+                  + Add Item
+                </Button>
+              </>
+            );
+          },
+          itemRender: (content, field, operation) => {
+            return (
+              <Card
+                size="small"
+                title={`Item ${field.name + 1}`}
+                key={field.key}
+                extra={
+                  <Button
+                    type="dashed"
+                    onClick={() => operation.remove(field.name)}
+                    block
+                  >
+                    Remove
+                  </Button>
+                }
+              >
+                {content}
+              </Card>
+            );
+          },
           items: [
             {
               type: 'text',
@@ -160,6 +186,35 @@ function App() {
                 label: 'List',
               },
               inputProps: {
+                listRender: (content, _fields, operation) => {
+                  console.log(operation);
+                  return (
+                    <>
+                      {content}
+                      <Button
+                        type="dashed"
+                        onClick={() => operation.add()}
+                        block
+                      >
+                        + Add Sub Item
+                      </Button>
+                    </>
+                  );
+                },
+                itemRender: (content, field, operation) => {
+                  return (
+                    <>
+                      {content}
+                      <Button
+                        type="dashed"
+                        onClick={() => operation.remove(field.name)}
+                        block
+                      >
+                        Remove
+                      </Button>
+                    </>
+                  );
+                },
                 items: [
                   {
                     type: 'text',
@@ -192,12 +247,16 @@ function App() {
   return (
     <div className="App">
       <FormComposer
+        labelCol={{ span: 6 }}
+        wrapperCol={{ span: 18 }}
         name="demo-form"
         items={items}
-        layout="vertical"
+        layout="horizontal"
         initialValues={{}}
         onFinish={onSubmit}
-      ></FormComposer>
+      >
+        <button type="submit">Submit</button>
+      </FormComposer>
     </div>
   );
 }

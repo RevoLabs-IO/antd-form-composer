@@ -1,50 +1,59 @@
-import { Button, Form } from 'antd';
+import { Form, FormListFieldData, FormListOperation, RowProps } from 'antd';
 import { NamePath } from 'antd/es/form/interface';
-import React, { Fragment } from 'react';
+import React from 'react';
 
 import { FormComposerItems } from './Items';
 import type { AnyObject, FormComposerItemType } from './types';
 
 export interface FormComposerListProps {
   name: NamePath;
+  rowProps?: RowProps;
   items: FormComposerItemType[];
   initialValues: AnyObject;
+  listRender: (
+    content: React.ReactNode,
+    fields: FormListFieldData[],
+    operation: FormListOperation,
+  ) => React.ReactNode;
+  itemRender: (
+    content: React.ReactNode,
+    field: FormListFieldData,
+    operation: FormListOperation,
+  ) => React.ReactNode;
 }
 
 export const FormComposerList: React.FC<FormComposerListProps> = ({
   name: fieldName,
   items,
-  initialValues,
+  rowProps,
+  listRender,
+  itemRender,
 }) => {
   return (
     <Form.List name={fieldName}>
-      {(listOfItems, { add, remove }) => {
-        return (
-          <>
-            {listOfItems.map((field) => {
-              return (
-                <Fragment key={field.key}>
-                  <FormComposerItems
-                    listName={fieldName}
-                    listConfig={field}
-                    items={items}
-                  />
-                  <Button
-                    type="primary"
-                    danger
-                    onClick={() => remove(field.name)}
-                  >
-                    Remove
-                  </Button>
-                </Fragment>
-              );
-            })}
-            <Button onClick={() => add(initialValues || {})}>Add</Button>
-            <Button onClick={() => add(initialValues || {}, 0)}>
-              Add top top
-            </Button>
-          </>
-        );
+      {(fields, operation) => {
+        const fieldItems = fields.map((field) => {
+          const itemsContent = (
+            <FormComposerItems
+              key={field.key}
+              rowProps={rowProps}
+              listName={fieldName}
+              listConfig={field}
+              items={items}
+            />
+          );
+
+          if (typeof itemRender === 'function') {
+            return itemRender(itemsContent, field, operation);
+          }
+
+          return itemsContent;
+        });
+
+        if (typeof listRender === 'function') {
+          return listRender(fieldItems, fields, operation);
+        }
+        return fieldItems;
       }}
     </Form.List>
   );

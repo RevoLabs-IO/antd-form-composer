@@ -45,13 +45,21 @@ export const FormComposerItem: React.FC<FormComposerItemProps> = (props) => {
     (item: FormComposerItemType, form?: FormInstance<AnyObject>) => {
       let content;
 
-      console.log(listConfig);
+      const {
+        name: listFieldName,
+        key: listFieldKey,
+        ...listFieldRest
+      } = listConfig || {};
 
       const formValues = form?.getFieldsValue() || {};
-
       const values = listName
-        ? (get(formValues, listName?.join('.')) as AnyObject)
+        ? (get(
+            formValues,
+            [...listName, listFieldName]?.join('.'),
+          ) as AnyObject)
         : formValues;
+
+      console.log(listName, listFieldName, values);
 
       const hidden =
         typeof item.hidden === 'function' && form
@@ -81,12 +89,6 @@ export const FormComposerItem: React.FC<FormComposerItemProps> = (props) => {
       if (isEmpty(itemProps)) {
         content = <InputComponent {...inputProps} />;
       } else {
-        const {
-          name: listFieldName,
-          key: listFieldKey,
-          ...listFieldRest
-        } = listConfig || {};
-
         const namePath = [
           listFieldName,
           ...(Array.isArray(itemProps.name)
