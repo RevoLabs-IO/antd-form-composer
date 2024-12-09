@@ -10,6 +10,7 @@ import {
   Cascader,
   Checkbox,
   DatePicker,
+  FormInstance,
   InputNumber,
   Mentions,
   Rate,
@@ -44,17 +45,22 @@ type FormValues = {
 };
 
 function App() {
-  const renderInputProps = useCallback(() => {
-    return {
-      placeholder: '',
-    };
-  }, []);
+  const renderInputProps = useCallback(
+    (_form: FormInstance, values: FormValues) => {
+      console.log(values);
+      return {
+        placeholder: '',
+      };
+    },
+    [],
+  );
 
   const items = useMemo(() => {
     return [
       {
         col: 24,
         type: 'text',
+        hidden: true,
         itemProps: {
           label: 'Text input',
           name: 'name',
@@ -66,6 +72,7 @@ function App() {
       {
         col: 24,
         type: 'text',
+        hidden: true,
         itemProps: {
           label: 'test',
           name: 'dev',
@@ -90,12 +97,8 @@ function App() {
               },
               type: 'text',
               itemProps: {
-                label: 'Tên thiết bị',
-                name: 'name',
-                required: true,
-                rules: [
-                  { required: true, message: 'Vui lòng nhập tên thiết bị ' },
-                ],
+                label: 'First',
+                name: 'first',
               },
             },
             {
@@ -105,34 +108,47 @@ function App() {
               },
               type: 'number',
               itemProps: {
-                label: 'Giá thuê',
-                name: 'monthlyFee',
-              },
-              inputProps: {
-                className: 'w-full',
-                suffix: 'đ/tháng',
-              },
-            },
-            {
-              col: {
-                xs: 24,
-                md: 8,
-              },
-              type: 'number',
-              itemProps: {
-                label: 'Giá mua',
-                name: 'ownershipFee',
-              },
-              inputProps: {
-                className: 'w-full',
+                label: 'Second',
+                name: 'second',
               },
             },
           ],
+          listRender: (content, _fields, operation) => {
+            return (
+              <>
+                {content}
+                <Button type="dashed" onClick={() => operation.add()} block>
+                  + Add Item
+                </Button>
+              </>
+            );
+          },
+          itemRender: (content, field, operation) => {
+            return (
+              <Card
+                size="small"
+                title={`Item ${field.name + 1}`}
+                key={field.key}
+                extra={
+                  <Button
+                    type="dashed"
+                    onClick={() => operation.remove(field.name)}
+                    block
+                  >
+                    Remove
+                  </Button>
+                }
+              >
+                {content}
+              </Card>
+            );
+          },
         },
       },
       {
         type: 'list',
         col: 24,
+        // hidden: true,
         itemProps: {
           label: 'Complex dynamic',
           name: 'complex-dynamic',
@@ -174,9 +190,7 @@ function App() {
               itemProps: {
                 label: 'Name',
                 name: 'name',
-                required: true,
               },
-              inputProps: renderInputProps,
             },
             {
               type: 'list',
@@ -187,7 +201,6 @@ function App() {
               },
               inputProps: {
                 listRender: (content, _fields, operation) => {
-                  console.log(operation);
                   return (
                     <>
                       {content}
@@ -219,7 +232,6 @@ function App() {
                   {
                     type: 'text',
                     itemProps: {
-                      label: 'first',
                       name: 'first',
                     },
                     inputProps: renderInputProps,
@@ -227,7 +239,6 @@ function App() {
                   {
                     type: 'number',
                     itemProps: {
-                      label: 'second',
                       name: 'second',
                     },
                   },

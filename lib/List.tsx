@@ -1,6 +1,6 @@
 import { Form, FormListFieldData, FormListOperation, RowProps } from 'antd';
 import { NamePath } from 'antd/es/form/interface';
-import React from 'react';
+import React, { Fragment } from 'react';
 
 import { FormComposerItems } from './Items';
 import type { AnyObject, FormComposerItemType } from './types';
@@ -22,37 +22,37 @@ export interface FormComposerListProps {
   ) => React.ReactNode;
 }
 
-export const FormComposerList: React.FC<FormComposerListProps> = ({
-  name: fieldName,
-  items,
-  rowProps,
-  listRender,
-  itemRender,
-}) => {
+export const FormComposerList: React.FC<FormComposerListProps> = (props) => {
+  const { name: fieldName, items, rowProps, listRender, itemRender } = props;
+
   return (
     <Form.List name={fieldName}>
       {(fields, operation) => {
         const fieldItems = fields.map((field) => {
           const itemsContent = (
             <FormComposerItems
-              key={field.key}
               rowProps={rowProps}
-              listName={fieldName}
+              parentFieldName={fieldName}
               listConfig={field}
               items={items}
             />
           );
 
           if (typeof itemRender === 'function') {
-            return itemRender(itemsContent, field, operation);
+            return (
+              <Fragment key={field.key}>
+                {itemRender(itemsContent, field, operation)}
+              </Fragment>
+            );
           }
 
-          return itemsContent;
+          return <Fragment key={field.key}>{itemsContent}</Fragment>;
         });
 
         if (typeof listRender === 'function') {
           return listRender(fieldItems, fields, operation);
         }
+
         return fieldItems;
       }}
     </Form.List>

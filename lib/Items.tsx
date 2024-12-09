@@ -6,7 +6,7 @@ import { FormComposerItem, FormComposerItemProps } from './Item';
 export type FormComposerItemsProps = {
   items: FormComposerItemProps['itemConfig'][];
   rowProps?: RowProps;
-  listName?: FormComposerItemProps['listName'];
+  parentFieldName?: FormComposerItemProps['parentFieldName'];
   listConfig?: FormComposerItemProps['listConfig'];
 };
 
@@ -14,7 +14,7 @@ export const FormComposerItems: React.FC<FormComposerItemsProps> = ({
   items,
   rowProps,
   listConfig,
-  listName,
+  parentFieldName,
 }) => {
   return (
     <Row {...(rowProps || { gutter: 16 })}>
@@ -22,7 +22,7 @@ export const FormComposerItems: React.FC<FormComposerItemsProps> = ({
         return (
           <FormComposerItem
             key={`${listConfig?.key || 'item'}-${index}`}
-            listName={listName}
+            parentFieldName={parentFieldName}
             listConfig={listConfig}
             itemConfig={item}
           />

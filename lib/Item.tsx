@@ -23,12 +23,12 @@ const getInputComponent = (item: FormComposerItemType) => {
 
 export type FormComposerItemProps = {
   itemConfig: FormComposerItemType;
-  listName?: NamePath;
+  parentFieldName?: NamePath;
   listConfig?: FormListFieldData;
 };
 
 export const FormComposerItem: React.FC<FormComposerItemProps> = (props) => {
-  const { itemConfig, listConfig, listName } = props;
+  const { itemConfig, listConfig, parentFieldName } = props;
 
   const InputComponent = useMemo(
     () => getInputComponent(itemConfig),
@@ -39,7 +39,8 @@ export const FormComposerItem: React.FC<FormComposerItemProps> = (props) => {
     typeof itemConfig.hidden === 'function' ||
     typeof itemConfig.col === 'function' ||
     typeof itemConfig.itemProps === 'function' ||
-    typeof itemConfig.inputProps === 'function';
+    typeof itemConfig.inputProps === 'function' ||
+    itemConfig?.itemProps?.shouldUpdate;
 
   const renderFormItem = useCallback(
     (item: FormComposerItemType, form?: FormInstance<AnyObject>) => {
@@ -51,59 +52,85 @@ export const FormComposerItem: React.FC<FormComposerItemProps> = (props) => {
         ...listFieldRest
       } = listConfig || {};
 
-      const formValues = form?.getFieldsValue() || {};
-      const values = listName
-        ? (get(
-            formValues,
-            [...listName, listFieldName]?.join('.'),
-          ) as AnyObject)
-        : formValues;
+      let hidden = item.hidden;
+      let itemProps = item.itemProps;
+      let inputProps = item.inputProps;
+      let col = item.col as ColSpanType;
 
-      console.log(listName, listFieldName, values);
+      let contextNamePath: NamePath[] = [];
 
-      const hidden =
-        typeof item.hidden === 'function' && form
-          ? item.hidden(form, values)
-          : item.hidden;
+      if (Array.isArray(parentFieldName)) {
+        contextNamePath = [...parentFieldName];
+      }
+
+      contextNamePath.push(listFieldName);
+
+      contextNamePath = contextNamePath.filter((path) => path !== undefined);
+
+      if (form) {
+        const formValues = form?.getFieldsValue() || {};
+
+        const values = contextNamePath?.length
+          ? (get(formValues, contextNamePath?.join('.')) as AnyObject)
+          : formValues;
+
+        console.log('form values: ', formValues);
+        console.log('context path: ', contextNamePath);
+        console.log('context values: ', values);
+
+        hidden =
+          typeof item.hidden === 'function' && form
+            ? item.hidden(form, values)
+            : item.hidden;
+
+        if (hidden) {
+          return null;
+        }
+
+        itemProps =
+          typeof item.itemProps === 'function' && form
+            ? item.itemProps(form, values)
+            : item.itemProps;
+
+        inputProps =
+          typeof item.inputProps === 'function' && form
+            ? item.inputProps(form, values)
+            : item.inputProps;
+
+        col = (
+          typeof item.col === 'function' && form
+            ? item.col(form, values)
+            : item.col
+        ) as ColSpanType;
+      }
 
       if (hidden) {
         return null;
       }
 
-      const itemProps =
-        typeof item.itemProps === 'function' && form
-          ? item.itemProps(form, values)
-          : item.itemProps;
-
-      const inputProps =
-        typeof item.inputProps === 'function' && form
-          ? item.inputProps(form, values)
-          : item.inputProps;
-
-      const col = (
-        typeof item.col === 'function' && form
-          ? item.col(form, values)
-          : item.col
-      ) as ColSpanType;
-
       if (isEmpty(itemProps)) {
         content = <InputComponent {...inputProps} />;
       } else {
-        const namePath = [
-          listFieldName,
-          ...(Array.isArray(itemProps.name)
-            ? itemProps.name
-            : [itemProps.name]),
-        ].filter((path) => path !== undefined);
+        let itemNamePath: NamePath[] = [listFieldName];
+
+        if (Array.isArray(itemProps.name)) {
+          itemNamePath = [...itemNamePath, ...itemProps.name];
+        } else {
+          itemNamePath = [...itemNamePath, itemProps.name];
+        }
+
+        itemNamePath = itemNamePath.filter((path) => path !== undefined);
+
+        console.log(listFieldName);
 
         content = (
           <Form.Item
             key={listFieldKey}
             {...itemProps}
             {...(listFieldRest || {})}
-            name={namePath}
+            name={itemNamePath}
           >
-            <InputComponent {...inputProps} name={namePath} />
+            <InputComponent {...inputProps} name={itemNamePath} />
           </Form.Item>
         );
       }
@@ -114,7 +141,7 @@ export const FormComposerItem: React.FC<FormComposerItemProps> = (props) => {
         </Col>
       );
     },
-    [InputComponent, listConfig, listName],
+    [InputComponent, listConfig, parentFieldName],
   );
 
   if (shouldUpdate) {
