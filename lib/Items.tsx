@@ -6,24 +6,27 @@ import { FormComposerItem, FormComposerItemProps } from './Item';
 export type FormComposerItemsProps = {
   items: FormComposerItemProps['itemConfig'][];
   rowProps?: RowProps;
-  parentFieldName?: FormComposerItemProps['parentFieldName'];
-  listConfig?: FormComposerItemProps['listConfig'];
+  dynamicListName?: FormComposerItemProps['dynamicListName'];
+  dynamicListConfig?: FormComposerItemProps['dynamicListConfig'];
+  root?: FormComposerItemProps['root'];
 };
 
 export const FormComposerItems: React.FC<FormComposerItemsProps> = ({
   items,
   rowProps,
-  listConfig,
-  parentFieldName,
+  dynamicListConfig,
+  dynamicListName,
+  root,
 }) => {
   return (
     <Row {...(rowProps || { gutter: 16 })}>
       {items.map((item, index) => {
         return (
           <FormComposerItem
-            key={`${listConfig?.key || 'item'}-${index}`}
-            parentFieldName={parentFieldName}
-            listConfig={listConfig}
+            root={root}
+            key={`${dynamicListConfig?.key || 'item'}-${index}`}
+            dynamicListName={dynamicListName}
+            dynamicListConfig={dynamicListConfig}
             itemConfig={item}
           />
         );

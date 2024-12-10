@@ -22,13 +22,14 @@ const getInputComponent = (item: FormComposerItemType) => {
 };
 
 export type FormComposerItemProps = {
+  root?: NamePath;
   itemConfig: FormComposerItemType;
-  parentFieldName?: NamePath;
-  listConfig?: FormListFieldData;
+  dynamicListName?: NamePath;
+  dynamicListConfig?: FormListFieldData;
 };
 
 export const FormComposerItem: React.FC<FormComposerItemProps> = (props) => {
-  const { itemConfig, listConfig, parentFieldName } = props;
+  const { itemConfig, dynamicListConfig, dynamicListName, root } = props;
 
   const InputComponent = useMemo(
     () => getInputComponent(itemConfig),
@@ -47,10 +48,10 @@ export const FormComposerItem: React.FC<FormComposerItemProps> = (props) => {
       let content;
 
       const {
-        name: listFieldName,
-        key: listFieldKey,
-        ...listFieldRest
-      } = listConfig || {};
+        name: dynamicListFieldName,
+        key: dynamicListFieldKey,
+        ...dynamicListFieldRest
+      } = dynamicListConfig || {};
 
       let hidden = item.hidden;
       let itemProps = item.itemProps;
@@ -59,24 +60,23 @@ export const FormComposerItem: React.FC<FormComposerItemProps> = (props) => {
 
       let contextNamePath: NamePath[] = [];
 
-      if (Array.isArray(parentFieldName)) {
-        contextNamePath = [...parentFieldName];
+      if (Array.isArray(dynamicListName)) {
+        contextNamePath = [...dynamicListName];
       }
 
-      contextNamePath.push(listFieldName);
-
-      contextNamePath = contextNamePath.filter((path) => path !== undefined);
+      const newRootNamePath = [...(root || []), ...contextNamePath];
 
       if (form) {
         const formValues = form?.getFieldsValue() || {};
 
         const values = contextNamePath?.length
-          ? (get(formValues, contextNamePath?.join('.')) as AnyObject)
+          ? (get(
+              formValues,
+              [...newRootNamePath, dynamicListFieldName]
+                .filter((path) => path !== undefined)
+                .join('.'),
+            ) as AnyObject)
           : formValues;
-
-        console.log('form values: ', formValues);
-        console.log('context path: ', contextNamePath);
-        console.log('context values: ', values);
 
         hidden =
           typeof item.hidden === 'function' && form
@@ -111,7 +111,7 @@ export const FormComposerItem: React.FC<FormComposerItemProps> = (props) => {
       if (isEmpty(itemProps)) {
         content = <InputComponent {...inputProps} />;
       } else {
-        let itemNamePath: NamePath[] = [listFieldName];
+        let itemNamePath: NamePath[] = [dynamicListFieldName];
 
         if (Array.isArray(itemProps.name)) {
           itemNamePath = [...itemNamePath, ...itemProps.name];
@@ -121,16 +121,18 @@ export const FormComposerItem: React.FC<FormComposerItemProps> = (props) => {
 
         itemNamePath = itemNamePath.filter((path) => path !== undefined);
 
-        console.log(listFieldName);
-
         content = (
           <Form.Item
-            key={listFieldKey}
             {...itemProps}
-            {...(listFieldRest || {})}
+            {...(dynamicListFieldRest || {})}
+            key={dynamicListFieldKey}
             name={itemNamePath}
           >
-            <InputComponent {...inputProps} name={itemNamePath} />
+            <InputComponent
+              {...inputProps}
+              name={itemNamePath}
+              root={newRootNamePath}
+            />
           </Form.Item>
         );
       }
@@ -141,7 +143,7 @@ export const FormComposerItem: React.FC<FormComposerItemProps> = (props) => {
         </Col>
       );
     },
-    [InputComponent, listConfig, parentFieldName],
+    [InputComponent, dynamicListConfig, dynamicListName, root],
   );
 
   if (shouldUpdate) {

@@ -45,29 +45,34 @@ type FormValues = {
 };
 
 function App() {
-  const renderInputProps = useCallback(
-    (_form: FormInstance, values: FormValues) => {
-      console.log(values);
-      return {
-        placeholder: '',
-      };
-    },
-    [],
-  );
-
   const items = useMemo(() => {
     return [
       {
         col: 24,
         type: 'text',
-        hidden: true,
+        hidden: false,
         itemProps: {
           label: 'Text input',
           name: 'name',
-          required: true,
-          rules: [{ required: true, message: 'Vui lòng nhập tên cấu hình' }],
         },
-        inputProps: {},
+      },
+      {
+        col: 24,
+        type: 'text',
+        hidden: false,
+        itemProps: {
+          label: 'Text input',
+          name: ['nested', 'first'],
+        },
+      },
+      {
+        col: 24,
+        type: 'text',
+        hidden: false,
+        itemProps: {
+          label: 'Text input',
+          name: ['nested', 'second'],
+        },
       },
       {
         col: 24,
@@ -150,7 +155,7 @@ function App() {
         col: 24,
         // hidden: true,
         itemProps: {
-          label: 'Complex dynamic',
+          label: 'complex-dynamic',
           name: 'complex-dynamic',
         },
         inputProps: {
@@ -197,7 +202,7 @@ function App() {
               col: 24,
               itemProps: {
                 name: 'items',
-                label: 'List',
+                label: 'items',
               },
               inputProps: {
                 listRender: (content, _fields, operation) => {
@@ -223,7 +228,7 @@ function App() {
                         onClick={() => operation.remove(field.name)}
                         block
                       >
-                        Remove
+                        Remove Sub Item
                       </Button>
                     </>
                   );
@@ -232,14 +237,75 @@ function App() {
                   {
                     type: 'text',
                     itemProps: {
-                      name: 'first',
+                      label: 'Name',
+                      name: 'name',
                     },
-                    inputProps: renderInputProps,
                   },
                   {
-                    type: 'number',
+                    type: 'list',
+                    col: 24,
+                    hidden: (_form: FormInstance, values: any) => { //eslint-disable-line
+                      return values?.name === 'ok';
+                    },
                     itemProps: {
-                      name: 'second',
+                      name: 'children',
+                      label: 'children',
+                    },
+                    inputProps: {
+                      items: [
+                        {
+                          type: 'text',
+                          itemProps: {
+                            label: 'First',
+                            name: 'first',
+                          },
+                        },
+                        {
+                          type: 'number',
+                          itemProps: {
+                            label: 'Second',
+                            name: 'second',
+                          },
+                          hidden: (_form: FormInstance, values: any) => { //eslint-disable-line
+                            // console.log(values);
+                            return values?.first === 'hidden';
+                          },
+                        },
+                      ],
+                      listRender: (content, _fields, operation) => {
+                        return (
+                          <>
+                            {content}
+                            <Button
+                              type="dashed"
+                              onClick={() => operation.add()}
+                              block
+                            >
+                              + Add sub sub Item
+                            </Button>
+                          </>
+                        );
+                      },
+                      itemRender: (content, field, operation) => {
+                        return (
+                          <Card
+                            size="small"
+                            title={`Item ${field.name + 1}`}
+                            key={field.key}
+                            extra={
+                              <Button
+                                type="dashed"
+                                onClick={() => operation.remove(field.name)}
+                                block
+                              >
+                                Remove sub sub
+                              </Button>
+                            }
+                          >
+                            {content}
+                          </Card>
+                        );
+                      },
                     },
                   },
                 ],
@@ -249,7 +315,7 @@ function App() {
         },
       },
     ] as FormComposerItemType[];
-  }, [renderInputProps]);
+  }, []);
 
   const onSubmit = useCallback((values: FormValues) => {
     console.log(values);

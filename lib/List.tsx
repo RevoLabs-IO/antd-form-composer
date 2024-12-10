@@ -20,10 +20,18 @@ export interface FormComposerListProps {
     field: FormListFieldData,
     operation: FormListOperation,
   ) => React.ReactNode;
+  root?: NamePath;
 }
 
 export const FormComposerList: React.FC<FormComposerListProps> = (props) => {
-  const { name: fieldName, items, rowProps, listRender, itemRender } = props;
+  const {
+    name: fieldName,
+    items,
+    rowProps,
+    listRender,
+    itemRender,
+    root,
+  } = props;
 
   return (
     <Form.List name={fieldName}>
@@ -31,9 +39,10 @@ export const FormComposerList: React.FC<FormComposerListProps> = (props) => {
         const fieldItems = fields.map((field) => {
           const itemsContent = (
             <FormComposerItems
+              root={root}
               rowProps={rowProps}
-              parentFieldName={fieldName}
-              listConfig={field}
+              dynamicListName={fieldName}
+              dynamicListConfig={field}
               items={items}
             />
           );
