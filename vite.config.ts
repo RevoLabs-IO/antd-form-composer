@@ -22,23 +22,26 @@ export default defineConfig(() => {
 
       // Generate TypeScript declaration files
       dts({
-        // Only include main entry file
-        include: ['lib/*.ts'],
-        // Adjust output path for declaration files
-        beforeWriteFile: (filePath, content) => ({
-          filePath: filePath.replace('/lib', ''),
-          content,
-        }),
+        insertTypesEntry: true,
+        outDir: './dist', // Changed this to output to root directory
+        include: ['lib'], // Specify the source directory to generate types from
       }),
     ],
     build: {
       lib: {
-        // Set library entry point
-        entry: resolve('lib', 'index.ts'),
+        // Main entry point of your library
+        entry: resolve(__dirname, 'lib/index.ts'),
+
         // Set library name for UMD builds
         name: 'antd-form-composer',
+
         // Configure output filename format
         fileName: (format) => `index.${format}.js`,
+
+        // Specify which formats to build
+        // 'es' - for ESM (import/export)
+        // 'umd' - for CommonJS and UMD
+        formats: ['es', 'umd'],
       },
       rollupOptions: {
         // Mark React as external dependency
