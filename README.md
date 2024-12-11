@@ -3,8 +3,9 @@
 A powerful and flexible form composition library for React applications, built on top of Ant Design Form. It provides an
 intuitive way to create complex forms with dynamic rendering and configuration.
 
-## ✨ Features
+✅ Fully compatible with Ant Design versions 4 and 5.
 
+## ✨ Features
 - 🔄 Dynamic form fields with flexible configurations
 - 🎨 Built-in support for common Ant Design form components
 - 📝 Form list support for repeatable fields
@@ -454,8 +455,7 @@ Common properties for all item types:
 
 ## 🤝 Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request. For major changes, please open an issue first to
-discuss what you would like to change.
+We welcome contributions! Here's how you can help:
 
 1. Fork the repository
 2. Create your feature branch (`git checkout -b feature/amazing-feature`)
@@ -463,13 +463,21 @@ discuss what you would like to change.
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
+Please ensure your PR:
+
+- Follows the existing code style
+- Includes appropriate tests
+- Updates documentation as needed
+
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 📫 Contact
-
-If you have any questions or suggestions, please feel free to open an issue or contact us:
+## 📬 Contact & Support
 
 - GitHub Issues: [Create an issue](https://github.com/RevoLabs-IO/antd-form-composer/issues)
 - Email: [info@revolabs.io](mailto:info@revolabs.io)
+
+## 🙏 Acknowledgments
+
+- Built on top of [Ant Design](https://ant.design/)
