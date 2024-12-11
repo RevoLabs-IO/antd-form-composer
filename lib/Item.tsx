@@ -7,6 +7,10 @@ import { registeredComponents } from './register-component';
 import { AnyObject, ColSpanType, FormComposerItemType } from './types';
 
 const getInputComponent = (item: FormComposerItemType) => {
+  if (item.type === 'hidden') {
+    return () => null;
+  }
+
   if (item.type === 'custom') {
     return item.component || (() => <>Custom field is not implemented.</>);
   }

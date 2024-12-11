@@ -1,4 +1,4 @@
-import { Checkbox, Input } from 'antd';
+import { Input } from 'antd';
 import React from 'react';
 
 import { FormComposerList } from './List';
@@ -21,7 +21,7 @@ export const registerInputComponents = (components: AnyObject): void => {
 
 registerInputComponents({
   text: Input,
+  password: Input.Password,
   textarea: Input.TextArea,
-  checkbox: Checkbox,
   list: FormComposerList,
 });

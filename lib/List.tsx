@@ -3,13 +3,12 @@ import { NamePath } from 'antd/es/form/interface';
 import React, { Fragment } from 'react';
 
 import { FormComposerItems } from './Items';
-import type { AnyObject, FormComposerItemType } from './types';
+import type { FormComposerItemType } from './types';
 
 export interface FormComposerListProps {
   name: NamePath;
   rowProps?: RowProps;
   items: FormComposerItemType[];
-  initialValues: AnyObject;
   listRender: (
     content: React.ReactNode,
     fields: FormListFieldData[],

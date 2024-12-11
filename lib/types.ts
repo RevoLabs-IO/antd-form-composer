@@ -1,17 +1,32 @@
 import type {
   AutoCompleteProps,
+  CascaderProps,
   CheckboxProps,
   ColProps,
   DatePickerProps,
   FormInstance,
   FormItemProps,
   InputNumberProps,
+  MentionsProps,
+  RadioGroupProps,
+  RadioProps,
+  RateProps,
   SelectProps,
   SwitchProps,
+  TimePickerProps,
+  TransferProps,
+  TreeSelectProps,
 } from 'antd';
+import type { CheckboxGroupProps } from 'antd/es/checkbox';
 import type { RangePickerProps } from 'antd/es/date-picker';
-import type { InputProps, PasswordProps, TextAreaProps } from 'antd/es/input';
-import { JSX, ReactNode } from 'react';
+import type {
+  InputProps,
+  PasswordProps,
+  SearchProps,
+  TextAreaProps,
+} from 'antd/es/input';
+import type { SliderRangeProps, SliderSingleProps } from 'antd/es/slider';
+import type { JSX, ReactNode } from 'react';
 
 import { FormComposerListProps } from './List';
 
@@ -27,53 +42,32 @@ interface FormItemBase {
   hidden?: ((form: FormInstance, values: AnyObject) => boolean) | boolean;
 }
 
-interface FormItemInput extends FormItemBase {
-  type: 'text';
-  inputProps:
-    | ((form: FormInstance, values: AnyObject) => InputProps)
-    | InputProps;
-}
-
-interface FormAutoComplete extends FormItemBase {
+interface FormItemAutoComplete extends FormItemBase {
   type: 'autocomplete';
   inputProps:
     | ((form: FormInstance, values: AnyObject) => AutoCompleteProps)
     | AutoCompleteProps;
 }
 
-interface FormItemNumber extends FormItemBase {
-  type: 'number';
+interface FormItemCascader extends FormItemBase {
+  type: 'cascader';
   inputProps:
-    | ((form: FormInstance, values: AnyObject) => InputNumberProps)
-    | InputNumberProps;
+    | ((form: FormInstance, values: AnyObject) => CascaderProps)
+    | CascaderProps;
 }
 
-interface FormItemSwitch extends FormItemBase {
-  type: 'switch';
+interface FormItemCheckbox extends FormItemBase {
+  type: 'checkbox';
   inputProps:
-    | ((form: FormInstance, values: AnyObject) => SwitchProps)
-    | SwitchProps;
+    | ((form: FormInstance, values: AnyObject) => CheckboxProps)
+    | CheckboxProps;
 }
 
-interface FormItemSelect extends FormItemBase {
-  type: 'select';
+interface FormItemCheckboxGroup extends FormItemBase {
+  type: 'checkbox';
   inputProps:
-    | ((form: FormInstance, values: AnyObject) => SelectProps)
-    | SelectProps;
-}
-
-interface FormItemPassword extends FormItemBase {
-  type: 'password';
-  inputProps:
-    | ((form: FormInstance, values: AnyObject) => PasswordProps)
-    | PasswordProps;
-}
-
-interface FormItemTextarea extends FormItemBase {
-  type: 'textarea';
-  inputProps:
-    | ((form: FormInstance, values: AnyObject) => TextAreaProps)
-    | TextAreaProps;
+    | ((form: FormInstance, values: AnyObject) => CheckboxGroupProps)
+    | CheckboxGroupProps;
 }
 
 interface FormItemDatePicker extends FormItemBase {
@@ -83,18 +77,119 @@ interface FormItemDatePicker extends FormItemBase {
     | DatePickerProps;
 }
 
-interface FormItemDateRangePicker extends FormItemBase {
+interface FormItemRangePicker extends FormItemBase {
   type: 'range-picker';
   inputProps:
     | ((form: FormInstance, values: AnyObject) => RangePickerProps)
     | RangePickerProps;
 }
 
-interface FormItemCheckbox extends FormItemBase {
-  type: 'checkbox';
+interface FormItemInput extends FormItemBase {
+  type: 'text';
   inputProps:
-    | ((form: FormInstance, values: AnyObject) => CheckboxProps)
-    | CheckboxProps;
+    | ((form: FormInstance, values: AnyObject) => InputProps)
+    | InputProps;
+}
+
+interface FormItemPassword extends FormItemBase {
+  type: 'password';
+  inputProps:
+    | ((form: FormInstance, values: AnyObject) => PasswordProps)
+    | PasswordProps;
+}
+
+interface FormItemSearch extends FormItemBase {
+  type: 'search';
+  inputProps:
+    | ((form: FormInstance, values: AnyObject) => SearchProps)
+    | SearchProps;
+}
+
+interface FormItemTextarea extends FormItemBase {
+  type: 'textarea';
+  inputProps:
+    | ((form: FormInstance, values: AnyObject) => TextAreaProps)
+    | TextAreaProps;
+}
+
+interface FormItemNumber extends FormItemBase {
+  type: 'number';
+  inputProps:
+    | ((form: FormInstance, values: AnyObject) => InputNumberProps)
+    | InputNumberProps;
+}
+
+interface FormItemMentions extends FormItemBase {
+  type: 'mentions';
+  inputProps:
+    | ((form: FormInstance, values: AnyObject) => MentionsProps)
+    | MentionsProps;
+}
+
+interface FormItemRadio extends FormItemBase {
+  type: 'radio';
+  inputProps:
+    | ((form: FormInstance, values: AnyObject) => RadioProps)
+    | RadioProps;
+}
+
+interface FormItemRadioGroup extends FormItemBase {
+  type: 'radio-group';
+  inputProps:
+    | ((form: FormInstance, values: AnyObject) => RadioGroupProps)
+    | RadioGroupProps;
+}
+
+interface FormItemRate extends FormItemBase {
+  type: 'rate';
+  inputProps:
+    | ((form: FormInstance, values: AnyObject) => RateProps)
+    | RateProps;
+}
+
+interface FormItemSelect extends FormItemBase {
+  type: 'select';
+  inputProps:
+    | ((form: FormInstance, values: AnyObject) => SelectProps)
+    | SelectProps;
+}
+
+interface FormItemSlider extends FormItemBase {
+  type: 'slider';
+  inputProps:
+    | ((
+        form: FormInstance,
+        values: AnyObject,
+      ) => SliderSingleProps | SliderRangeProps)
+    | (SliderSingleProps | SliderRangeProps);
+}
+
+interface FormItemSwitch extends FormItemBase {
+  type: 'switch';
+  inputProps:
+    | ((form: FormInstance, values: AnyObject) => SwitchProps)
+    | SwitchProps;
+}
+
+interface FormItemTimePicker extends FormItemBase {
+  type: 'time-picker';
+  inputProps:
+    | ((form: FormInstance, values: AnyObject) => TimePickerProps)
+    | TimePickerProps;
+}
+
+interface FormItemTransfer extends FormItemBase {
+  type: 'transfer';
+  inputProps:
+    | ((form: FormInstance, values: AnyObject) => TransferProps)
+    | TransferProps;
+}
+
+interface FormItemTreeSelect extends FormItemBase {
+  type: 'tree-select';
+  inputProps:
+    | ((form: FormInstance, values: AnyObject) => TreeSelectProps)
+    | TreeSelectProps;
 }
 
 interface FormItemCustom extends FormItemBase {
@@ -128,16 +223,27 @@ interface FormItemDynamic extends FormItemBase {
 }
 
 export type FormComposerItemType =
-  | FormAutoComplete
-  | FormItemNumber
-  | FormItemInput
-  | FormItemSwitch
-  | FormItemTextarea
-  | FormItemPassword
-  | FormItemDatePicker
-  | FormItemDateRangePicker
-  | FormItemSelect
+  | FormItemAutoComplete
+  | FormItemCascader
   | FormItemCheckbox
+  | FormItemCheckboxGroup
+  | FormItemDatePicker
+  | FormItemRangePicker
+  | FormItemInput
+  | FormItemSearch
+  | FormItemPassword
+  | FormItemTextarea
+  | FormItemNumber
+  | FormItemMentions
+  | FormItemRadio
+  | FormItemRadioGroup
+  | FormItemRate
+  | FormItemSelect
+  | FormItemSlider
+  | FormItemSwitch
+  | FormItemTimePicker
+  | FormItemTransfer
+  | FormItemTreeSelect
   | FormListItem
   | FormItemCustom
   | FormItemHidden
