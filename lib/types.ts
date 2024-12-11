@@ -7,7 +7,6 @@ import type {
   FormInstance,
   FormItemProps,
   InputNumberProps,
-  MentionsProps,
   RadioGroupProps,
   RadioProps,
   RateProps,
@@ -25,6 +24,7 @@ import type {
   SearchProps,
   TextAreaProps,
 } from 'antd/es/input';
+import type { MentionProps } from 'antd/es/mentions';
 import type { SliderRangeProps, SliderSingleProps } from 'antd/es/slider';
 import type { JSX, ReactNode } from 'react';
 
@@ -122,8 +122,8 @@ interface FormItemNumber extends FormItemBase {
 interface FormItemMentions extends FormItemBase {
   type: 'mentions';
   inputProps:
-    | ((form: FormInstance, values: AnyObject) => MentionsProps)
-    | MentionsProps;
+    | ((form: FormInstance, values: AnyObject) => MentionProps)
+    | MentionProps;
 }
 
 interface FormItemRadio extends FormItemBase {
@@ -181,8 +181,8 @@ interface FormItemTimePicker extends FormItemBase {
 interface FormItemTransfer extends FormItemBase {
   type: 'transfer';
   inputProps:
-    | ((form: FormInstance, values: AnyObject) => TransferProps)
-    | TransferProps;
+    | ((form: FormInstance, values: AnyObject) => TransferProps<AnyObject>)
+    | TransferProps<AnyObject>;
 }
 
 interface FormItemTreeSelect extends FormItemBase {
