@@ -1,6 +1,6 @@
 {
   "name": "antd-form-composer",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A powerful and flexible form composition library for React applications, built on top of Ant Design Form",
   "license": "MIT",
   "main": "./dist/index.umd.js",
