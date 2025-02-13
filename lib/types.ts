@@ -26,7 +26,7 @@ import type {
 } from 'antd/es/input';
 import type { MentionProps } from 'antd/es/mentions';
 import type { SliderRangeProps, SliderSingleProps } from 'antd/es/slider';
-import type { JSX, ReactNode } from 'react';
+import React from 'react';
 
 import { FormComposerListProps } from './List';
 
@@ -194,7 +194,7 @@ interface FormItemTreeSelect extends FormItemBase {
 
 interface FormItemCustom extends FormItemBase {
   type: 'custom';
-  component?: (props: AnyObject) => JSX.Element | ReactNode;
+  component?: React.ComponentType<any>; //eslint-disable-line
   inputProps:
     | ((form: FormInstance, values: AnyObject) => AnyObject)
     | AnyObject;
@@ -216,7 +216,7 @@ interface FormListItem extends FormItemBase {
 
 interface FormItemDynamic extends FormItemBase {
   type: string;
-  component?: (props: AnyObject) => JSX.Element | ReactNode;
+  component?: React.ComponentType<any>; //eslint-disable-line
   inputProps:
     | ((form: FormInstance, values: AnyObject) => AnyObject)
     | AnyObject;
