@@ -328,7 +328,7 @@ function App() {
         wrapperCol={{ span: 18 }}
         name="demo-form"
         items={items}
-        layout="horizontal"
+        layout="inline"
         initialValues={{}}
         onFinish={onSubmit}
       >

@@ -1,4 +1,4 @@
-import { Row, RowProps } from 'antd';
+import { FormProps, Row, RowProps } from 'antd';
 import React from 'react';
 
 import { FormComposerItem, FormComposerItemProps } from './Item';
@@ -9,6 +9,7 @@ export type FormComposerItemsProps = {
   dynamicListName?: FormComposerItemProps['dynamicListName'];
   dynamicListConfig?: FormComposerItemProps['dynamicListConfig'];
   root?: FormComposerItemProps['root'];
+  layout?: FormProps['layout'];
 };
 
 export const FormComposerItems: React.FC<FormComposerItemsProps> = ({
@@ -17,20 +18,24 @@ export const FormComposerItems: React.FC<FormComposerItemsProps> = ({
   dynamicListConfig,
   dynamicListName,
   root,
+  layout = 'horizontal',
 }) => {
-  return (
-    <Row {...(rowProps || { gutter: 16 })}>
-      {items.map((item, index) => {
-        return (
-          <FormComposerItem
-            root={root}
-            key={`${dynamicListConfig?.key || 'item'}-${index}`}
-            dynamicListName={dynamicListName}
-            dynamicListConfig={dynamicListConfig}
-            itemConfig={item}
-          />
-        );
-      })}
-    </Row>
-  );
+  const content = items.map((item, index) => {
+    return (
+      <FormComposerItem
+        root={root}
+        key={`${dynamicListConfig?.key || 'item'}-${index}`}
+        dynamicListName={dynamicListName}
+        dynamicListConfig={dynamicListConfig}
+        itemConfig={item}
+        layout={layout}
+      />
+    );
+  });
+
+  if (layout === 'inline') {
+    return content;
+  }
+
+  return <Row {...(rowProps || { gutter: 16 })}>{content}</Row>;
 };

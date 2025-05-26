@@ -14,7 +14,13 @@ export const FormComposer: React.FC<FormComposerProps> = (props) => {
 
   return (
     <Form {...formProps}>
-      {items ? <FormComposerItems items={items} rowProps={rowProps} /> : null}
+      {items ? (
+        <FormComposerItems
+          items={items}
+          rowProps={rowProps}
+          layout={formProps.layout || 'horizontal'}
+        />
+      ) : null}
       <>{children}</>
     </Form>
   );

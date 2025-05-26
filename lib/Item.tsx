@@ -1,4 +1,4 @@
-import { Col, Form, FormInstance, FormListFieldData } from 'antd';
+import { Col, Form, FormInstance, FormListFieldData, FormProps } from 'antd';
 import { NamePath } from 'antd/es/form/interface';
 import React, { useCallback, useMemo } from 'react';
 
@@ -30,10 +30,12 @@ export type FormComposerItemProps = {
   itemConfig: FormComposerItemType;
   dynamicListName?: NamePath;
   dynamicListConfig?: FormListFieldData;
+  layout: FormProps['layout'];
 };
 
 export const FormComposerItem: React.FC<FormComposerItemProps> = (props) => {
-  const { itemConfig, dynamicListConfig, dynamicListName, root } = props;
+  const { itemConfig, dynamicListConfig, dynamicListName, root, layout } =
+    props;
 
   const InputComponent = useMemo(
     () => getInputComponent(itemConfig),
@@ -141,13 +143,17 @@ export const FormComposerItem: React.FC<FormComposerItemProps> = (props) => {
         );
       }
 
+      if (layout === 'inline') {
+        return content;
+      }
+
       return (
         <Col {...(typeof col === 'object' ? col : { span: col || 24 })}>
           {content}
         </Col>
       );
     },
-    [InputComponent, dynamicListConfig, dynamicListName, root],
+    [InputComponent, dynamicListConfig, dynamicListName, layout, root],
   );
 
   if (shouldUpdate) {
