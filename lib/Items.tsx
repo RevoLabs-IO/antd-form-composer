@@ -28,28 +28,30 @@ export type FormComposerItemsProps = {
  * @param props - The props for the FormComposerItems component
  * @returns The rendered form items
  */
-export const FormComposerItems: React.FC<FormComposerItemsProps> = ({
-  items,
-  rowProps,
-  dynamicListConfig,
-  dynamicListName,
-  root,
-  layout = 'horizontal',
-}) => {
-  const content = items.map((item, index) => (
-    <FormComposerItem
-      root={root}
-      key={`${dynamicListConfig?.key || 'item'}-${index}`}
-      dynamicListName={dynamicListName}
-      dynamicListConfig={dynamicListConfig}
-      itemConfig={item}
-      layout={layout}
-    />
-  ));
+export const FormComposerItems: React.FC<FormComposerItemsProps> = React.memo(
+  ({
+    items,
+    rowProps,
+    dynamicListConfig,
+    dynamicListName,
+    root,
+    layout = 'horizontal',
+  }) => {
+    const content = items.map((item, index) => (
+      <FormComposerItem
+        root={root}
+        key={`${dynamicListConfig?.key || 'item'}-${index}`}
+        dynamicListName={dynamicListName}
+        dynamicListConfig={dynamicListConfig}
+        itemConfig={item}
+        layout={layout}
+      />
+    ));
 
-  if (layout === 'inline') {
-    return <>{content}</>;
-  }
+    if (layout === 'inline') {
+      return <>{content}</>;
+    }
 
-  return <Row {...(rowProps || { gutter: 16 })}>{content}</Row>;
-};
+    return <Row {...(rowProps || { gutter: 16 })}>{content}</Row>;
+  },
+);

@@ -35,6 +35,7 @@ module.exports = {
 
     'react/react-in-jsx-scope': 'off',
     'react/display-name': 'off',
+    'react/prop-types': 'off', // Disabled for TypeScript files as we use interfaces
     'react-refresh/only-export-components': [
       'warn',
       { allowConstantExport: true },

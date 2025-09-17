@@ -9,6 +9,7 @@ import {
 import { NamePath } from 'antd/es/form/interface';
 import React, { useCallback, useMemo } from 'react';
 
+import { FormComposerErrorBoundary } from './error-boundary';
 import { get, isEmpty } from './helper';
 import { registeredComponents } from './register-component';
 import { AnyObject, FormComposerItemType } from './types';
@@ -96,123 +97,133 @@ const computeDynamicProps = (
  * @param props - The props for the FormComposerItem component
  * @returns The rendered form item or null if hidden
  */
-export const FormComposerItem: React.FC<FormComposerItemProps> = (props) => {
-  const { itemConfig, dynamicListConfig, dynamicListName, root, layout } =
-    props;
+export const FormComposerItem: React.FC<FormComposerItemProps> = React.memo(
+  (props) => {
+    const { itemConfig, dynamicListConfig, dynamicListName, root, layout } =
+      props;
 
-  const InputComponent = useMemo(
-    () => getInputComponent(itemConfig),
-    [itemConfig],
-  );
+    const InputComponent = useMemo(
+      () => getInputComponent(itemConfig),
+      [itemConfig],
+    );
 
-  const shouldUpdate =
-    typeof itemConfig.hidden === 'function' ||
-    typeof itemConfig.col === 'function' ||
-    typeof itemConfig.itemProps === 'function' ||
-    typeof itemConfig.inputProps === 'function' ||
-    itemConfig?.itemProps?.shouldUpdate;
+    const shouldUpdate =
+      typeof itemConfig.hidden === 'function' ||
+      typeof itemConfig.col === 'function' ||
+      typeof itemConfig.itemProps === 'function' ||
+      typeof itemConfig.inputProps === 'function' ||
+      itemConfig?.itemProps?.shouldUpdate;
 
-  /**
-   * Renders the form item content based on the item configuration and form state.
-   * Handles dynamic properties, name path construction, and conditional rendering.
-   *
-   * @param item - The form item configuration
-   * @param form - Optional form instance for dynamic properties
-   * @returns The rendered form item content or null if hidden
-   */
-  const renderFormItem = useCallback(
-    (item: FormComposerItemType, form?: FormInstance<AnyObject>) => {
-      const {
-        name: dynamicListFieldName,
-        key: dynamicListFieldKey,
-        ...dynamicListFieldRest
-      } = dynamicListConfig || {};
+    /**
+     * Renders the form item content based on the item configuration and form state.
+     * Handles dynamic properties, name path construction, and conditional rendering.
+     *
+     * @param item - The form item configuration
+     * @param form - Optional form instance for dynamic properties
+     * @returns The rendered form item content or null if hidden
+     */
+    const renderFormItem = useCallback(
+      (item: FormComposerItemType, form?: FormInstance<AnyObject>) => {
+        const {
+          name: dynamicListFieldName,
+          key: dynamicListFieldKey,
+          ...dynamicListFieldRest
+        } = dynamicListConfig || {};
 
-      // Build context name path for nested structures
-      let contextNamePath: NamePath[] = [];
-      if (Array.isArray(dynamicListName)) {
-        contextNamePath = [...dynamicListName];
-      }
-      const newRootNamePath = [...(root || []), ...contextNamePath];
+        // Build context name path for nested structures
+        let contextNamePath: NamePath[] = [];
+        if (Array.isArray(dynamicListName)) {
+          contextNamePath = [...dynamicListName];
+        }
+        const newRootNamePath = [...(root || []), ...contextNamePath];
 
-      // Get current form values for dynamic properties
-      const formValues = form?.getFieldsValue() || {};
-      const values = contextNamePath?.length
-        ? (get(
-            formValues,
-            [...newRootNamePath, dynamicListFieldName]
-              .filter((path) => path !== undefined)
-              .join('.'),
-          ) as AnyObject)
-        : formValues;
+        // Get current form values for dynamic properties
+        const formValues = form?.getFieldsValue() || {};
+        const values = contextNamePath?.length
+          ? (get(
+              formValues,
+              [...newRootNamePath, dynamicListFieldName]
+                .filter((path) => path !== undefined)
+                .join('.'),
+            ) as AnyObject)
+          : formValues;
 
-      // Compute dynamic properties if form is available
-      const { hidden, itemProps, inputProps, col } = form
-        ? computeDynamicProps(item, form, values)
-        : {
-            hidden: item.hidden,
-            itemProps: item.itemProps,
-            inputProps: item.inputProps,
-            col: item.col,
-          };
+        // Compute dynamic properties if form is available
+        const { hidden, itemProps, inputProps, col } = form
+          ? computeDynamicProps(item, form, values)
+          : {
+              hidden: item.hidden,
+              itemProps: item.itemProps,
+              inputProps: item.inputProps,
+              col: item.col,
+            };
 
-      if (hidden) {
-        return null;
-      }
-
-      let content: React.ReactNode;
-
-      if (isEmpty(itemProps)) {
-        content = <InputComponent {...inputProps} />;
-      } else {
-        let itemNamePath: NamePath[] = [dynamicListFieldName];
-
-        if (Array.isArray(itemProps.name)) {
-          itemNamePath = [...itemNamePath, ...itemProps.name];
-        } else {
-          itemNamePath = [...itemNamePath, itemProps.name];
+        if (hidden) {
+          return null;
         }
 
-        itemNamePath = itemNamePath.filter((path) => path !== undefined);
+        let content: React.ReactNode;
 
-        content = (
-          <Form.Item
-            {...itemProps}
-            {...(dynamicListFieldRest || {})}
-            key={dynamicListFieldKey}
-            name={itemNamePath}
-          >
-            <InputComponent
-              {...inputProps}
+        if (isEmpty(itemProps)) {
+          content = (
+            <FormComposerErrorBoundary>
+              <InputComponent {...inputProps} />
+            </FormComposerErrorBoundary>
+          );
+        } else {
+          let itemNamePath: NamePath[] = [dynamicListFieldName];
+
+          if (Array.isArray(itemProps.name)) {
+            itemNamePath = [...itemNamePath, ...itemProps.name];
+          } else {
+            itemNamePath = [...itemNamePath, itemProps.name];
+          }
+
+          itemNamePath = itemNamePath.filter((path) => path !== undefined);
+
+          content = (
+            <Form.Item
+              {...itemProps}
+              {...(dynamicListFieldRest || {})}
+              key={dynamicListFieldKey}
               name={itemNamePath}
-              root={newRootNamePath}
-            />
-          </Form.Item>
-        );
-      }
+            >
+              <FormComposerErrorBoundary>
+                <InputComponent
+                  {...inputProps}
+                  name={itemNamePath}
+                  root={newRootNamePath}
+                />
+              </FormComposerErrorBoundary>
+            </Form.Item>
+          );
+        }
 
-      if (layout === 'inline') {
-        return content;
-      }
+        if (layout === 'inline') {
+          return content;
+        }
 
-      const colProps: ColProps =
-        typeof col === 'object'
-          ? (col as ColProps)
-          : { span: (col as number | string) || 24 };
+        const colProps: ColProps =
+          typeof col === 'object'
+            ? (col as ColProps)
+            : { span: (col as number | string) || 24 };
 
-      return <Col {...colProps}>{content}</Col>;
-    },
-    [InputComponent, dynamicListConfig, dynamicListName, layout, root],
-  );
-
-  // If the item has dynamic properties, wrap in Form.Item with shouldUpdate
-  if (shouldUpdate) {
-    return (
-      <Form.Item shouldUpdate noStyle>
-        {(form) => renderFormItem(itemConfig, form as FormInstance<AnyObject>)}
-      </Form.Item>
+        return <Col {...colProps}>{content}</Col>;
+      },
+      [InputComponent, dynamicListConfig, dynamicListName, layout, root],
     );
-  }
 
-  return renderFormItem(itemConfig);
-};
+    // If the item has dynamic properties, wrap in Form.Item with shouldUpdate
+    if (shouldUpdate) {
+      return (
+        <Form.Item shouldUpdate noStyle>
+          {(form) =>
+            renderFormItem(itemConfig, form as FormInstance<AnyObject>)
+          }
+        </Form.Item>
+      );
+    }
+
+    return renderFormItem(itemConfig);
+  },
+);

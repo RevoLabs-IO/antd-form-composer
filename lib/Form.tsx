@@ -23,7 +23,7 @@ interface FormComposerProps extends FormProps {
  * @param props - The props for the FormComposer component
  * @returns The rendered Form component with FormComposerItems
  */
-export const FormComposer: React.FC<FormComposerProps> = (props) => {
+export const FormComposer: React.FC<FormComposerProps> = React.memo((props) => {
   const { items, rowProps, children, ...formProps } = props;
 
   return (
@@ -38,4 +38,4 @@ export const FormComposer: React.FC<FormComposerProps> = (props) => {
       {children}
     </Form>
   );
-};
+});
